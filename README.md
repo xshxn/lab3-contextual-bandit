@@ -1,74 +1,33 @@
-# Student Submission Checklist (Lab 3)
+# Lab 3: Contextual Bandits for News Recommendation
 
-Before submitting your Lab 3 assignment, ensure that **all items below are completed**. Submissions that do not follow this checklist may receive partial or no credit.
+This project implements a Contextual Bandit system to recommend news articles to users based on their demographic and behavioral data. The system learns to map user contexts to preferred news categories (Entertainment, Education, Tech, Crime) to maximize user engagement (reward).
 
----
+## ?? Approach and Design Decisions
 
-## 🔹 Repository and Branching
+### 1. User Context Classification
+Instead of treating all users the same, we classify users into distinct "contexts" or clusters provided in the dataset (User1, User2, User3).
+- **Model used**: XGBoost Classifier (XGBClassifier).
+- **Features**: User demographics (age, income, location) and behavior (clicks, purchase amount, etc.).
+- **Outcome**: The classifier predicts the user type, which determines the set of arms (news categories) available for that specific context.
 
-* [ ] The repository is correctly created on GitHub.
-* [ ] All work is committed to **exactly one branch** named
-  `firstname_U20230xxx`.
-* [ ] **No work is pushed to `master`**.
-* [ ] The correct branch is pushed to GitHub.
+### 2. Contextual Bandit Algorithms
+We implemented and compared three standard multi-armed bandit algorithms to handle the exploration-exploitation trade-off within each context:
+- **Epsilon-Greedy**: Explores random arms with probability $\epsilon$ and exploits the best known arm with probability -\epsilon$.
+- **Upper Confidence Bound (UCB)**: Selects arms based on an optimistic estimate of their value (mean reward + confidence interval), automatically reducing exploration as confidence grows.
+- **SoftMax**: Selects arms probabilistically based on their estimated values using a Boltzmann distribution.
 
----
+### 3. Arms and Rewards
+- **Arms**: There are 12 total arms, representing combinations of 3 user contexts $\times$ 4 news categories.
+- **Reward**: Obtained from a custom sampler module initialized with student roll number (126).
 
-## 🔹 Notebook Submission
+## ?? Key Results and Observations
 
-* [ ] Exactly **one** Jupyter Notebook (`.ipynb`) is submitted.
-* [ ] The notebook is placed at the **root of the repository**.
-* [ ] The notebook is named **exactly**:
-  `lab3_results_<roll_number>.ipynb`.
-* [ ] The notebook runs **top to bottom without errors**.
-* [ ] All outputs (plots, tables, metrics) are visible in the notebook.
+### Algorithm Performance
+- **UCB (C=1.0)** performed best overall, showing stable convergence and high final average rewards. It balanced exploration and exploitation effectively for this specific reward distribution.
+- **Epsilon-Greedy ($\epsilon$=0.1)** was a strong contender, offering robust performance with a simple mechanism. Lower values ($\epsilon$=0.01) were too slow to learn, while higher values exploited too little.
+- **SoftMax ($\tau$=1.0)** provided a middle ground but required careful tuning.
 
----
+### Recommendations
+The final system generates recommendations for the test dataset (	est_users.csv).
+- **Output**: 	test_user_recommendations.csv containing predicted user context, recommended category, arm index, and expected reward for 2000 test users.
 
-## 🔹 Sampler Usage
-
-* [ ] The provided `sampler` package is used **without modification**.
-* [ ] The sampler is initialized using your correct roll number `i`.
-* [ ] Rewards are obtained **only** via `sampler.sample(j)`.
-* [ ] No hard-coded or synthetic rewards are used.
-
----
-
-## 🔹 Contextual Bandit Implementation
-
-* [ ] User category is treated as the **context**.
-* [ ] News category is treated as the **bandit arm**.
-* [ ] The arm index mapping follows the specification in the lab handout.
-* [ ] All three algorithms are implemented:
-
-  * Epsilon-Greedy
-  * Upper Confidence Bound (UCB)
-  * SoftMax
-
----
-
-## 🔹 Evaluation and Plots
-
-* [ ] Classification accuracy is reported on `test_users.csv`.
-* [ ] Reinforcement learning simulation is run for **T = 10,000 steps**.
-* [ ] Plots include:
-
-  * Average Reward vs. Time (per context)
-  * Hyperparameter comparison plots
-* [ ] All plots have labeled axes, legends, and titles.
-
----
-
-## 🔹 README.md Requirements
-
-* [ ] README.md is present at the repository root.
-* [ ] It explains the overall approach and design decisions.
-* [ ] It summarizes key results and observations.
-* [ ] It includes clear instructions to reproduce the experiments.
-* [ ] All external references (if any) are properly cited.
-
----
-
-## Important Note
-
-> Submissions that do not follow the specified branch name, notebook naming convention, or sampler usage rules may not be evaluated.
